@@ -1,0 +1,10 @@
+
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+.env
+.DS_Store
+rxhcc_sample_data/
+rxhcc_output_data/
+.vscode/
