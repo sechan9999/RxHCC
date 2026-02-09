@@ -107,9 +107,16 @@ with st.sidebar:
     st.divider()
     
     # 네비게이션
+    # 네비게이션 / Navigation
     page = st.radio(
         "📍 Navigation", 
-        ["🔍 실시간 검사", "📋 배치 데모", "📊 데이터 미리보기", "📖 규칙 사전", "📈 분석 대시보드"],
+        [
+            "🔍 실시간 검사 (Real-time Scan)", 
+            "📋 배치 데모 (Batch Demo)", 
+            "📊 데이터 미리보기 (Data Preview)", 
+            "📖 규칙 사전 (Rule Dictionary)", 
+            "📈 분석 대시보드 (Analytics Dashboard)"
+        ],
         index=0
     )
     
@@ -234,22 +241,22 @@ def get_predefined_scenarios():
 # ============================================================
 # 페이지 1: 실시간 검사
 # ============================================================
-if page == "🔍 실시간 검사":
-    st.title("🔍 실시간 무결성 검사")
-    st.markdown("환자의 진단코드(ICD)와 약물코드(NDC)를 입력하여 검증합니다.")
+if page == "🔍 실시간 검사 (Real-time Scan)":
+    st.title("🔍 실시간 무결성 검사 (Real-time Integrity Scan)")
+    st.markdown("환자의 **진단코드(ICD)**와 **약물코드(NDC)**를 입력하여 검증합니다.\n\nVerify claims by entering Patient **Diagnosis (ICD)** and **Drug (NDC)** codes.")
     
-    tab1, tab2 = st.tabs(["📝 직접 입력", "📋 시나리오 선택"])
+    tab1, tab2 = st.tabs(["📝 직접 입력 (Manual Input)", "📋 시나리오 선택 (Scenario Selection)"])
     
     with tab1:
         col1, col2 = st.columns(2)
         with col1:
-            st.subheader("환자 정보")
+            st.subheader("환자 정보 (Patient Info)")
             claim_id = st.text_input("Claim ID", value="CLM-TEST-001", key="manual_claim_id")
             patient_id = st.text_input("Patient ID", value="PAT-00001", key="manual_patient_id")
             provider_id = st.text_input("Provider ID", value="PRV-1234", key="manual_provider_id")
             
         with col2:
-            st.subheader("코드 입력")
+            st.subheader("코드 입력 (Code Input)")
             icd_input = st.text_input(
                 "ICD 코드 (쉼표로 구분)", 
                 value="E11.9",
@@ -269,7 +276,7 @@ if page == "🔍 실시간 검사":
                 key="manual_hcc"
             )
             
-        if st.button("🚀 검증 실행", type="primary", use_container_width=True, key="manual_validate"):
+        if st.button("🚀 검증 실행 (Run Validation)", type="primary", use_container_width=True, key="manual_validate"):
             if not icd_input.strip() or not ndc_input.strip():
                 st.error("ICD 코드와 NDC 코드를 모두 입력해주세요.")
             else:
@@ -319,9 +326,9 @@ if page == "🔍 실시간 검사":
                 })
 
     with tab2:
-        st.subheader("사전 정의된 시나리오")
+        st.subheader("사전 정의된 시나리오 (Predefined Scenarios)")
         scenarios = get_predefined_scenarios()
-        selected = st.selectbox("시나리오 선택", list(scenarios.keys()))
+        selected = st.selectbox("시나리오 선택 (Select Scenario)", list(scenarios.keys()))
         scenario = scenarios[selected]
         
         st.info(f"**설명:** {scenario['description']}")
@@ -331,7 +338,7 @@ if page == "🔍 실시간 검사":
         with col_a:
             st.code(f"ICD: {scenario['icd_codes']}\nNDC: {scenario['ndc_codes']}\nHCC: {scenario['hcc_codes']}")
             
-        if st.button("🎯 시나리오 검증", type="primary", use_container_width=True, key="scenario_validate"):
+        if st.button("🎯 시나리오 검증 (Validate Scenario)", type="primary", use_container_width=True, key="scenario_validate"):
             with st.spinner("검증 중..."):
                 result = run_validation(scenario)
                 
@@ -351,22 +358,22 @@ if page == "🔍 실시간 검사":
         history_df = pd.DataFrame(st.session_state.validation_history)
         st.dataframe(history_df, use_container_width=True, hide_index=True)
         
-        if st.button("🗑️ 히스토리 초기화"):
+        if st.button("🗑️ 히스토리 초기화 (Clear History)"):
             st.session_state.validation_history = []
             st.rerun()
 
 # ============================================================
 # 페이지 2: 배치 데모
 # ============================================================
-elif page == "📋 배치 데모":
-    st.title("📋 배치 검증 데모")
-    st.markdown("사전 정의된 시나리오를 배치로 검증하거나, 합성 데이터를 생성하여 대량 검증합니다.")
+elif page == "📋 배치 데모 (Batch Demo)":
+    st.title("📋 배치 검증 데모 (Batch Validation Demo)")
+    st.markdown("사전 정의된 시나리오를 배치로 검증하거나, 합성 데이터를 생성하여 대량 검증합니다.\n\nValidate scenarios in batch or generate synthetic data for large-scale testing.")
     
-    tab1, tab2 = st.tabs(["🎯 시나리오 배치", "🔬 합성 데이터 생성 & 검증"])
+    tab1, tab2 = st.tabs(["🎯 시나리오 배치 (Scenario Batch)", "🔬 합성 데이터 생성/검증 (Synthetic Data)"])
     
     with tab1:
-        st.subheader("7개 시나리오 일괄 검증")
-        if st.button("▶️ 전체 시나리오 검증 실행", type="primary", use_container_width=True, key="batch_scenarios"):
+        st.subheader("7개 시나리오 일괄 검증 (Batch Validate 7 Scenarios)")
+        if st.button("▶️ 전체 시나리오 검증 실행 (Run All)", type="primary", use_container_width=True, key="batch_scenarios"):
             scenarios = get_predefined_scenarios()
             progress = st.progress(0)
             all_results = []
@@ -424,13 +431,13 @@ elif page == "📋 배치 데모":
             st.dataframe(styled_df, use_container_width=True, hide_index=True)
 
     with tab2:
-        st.subheader("합성 데이터 생성 & 대량 검증")
+        st.subheader("합성 데이터 생성 & 대량 검증 (Generate Synthetic Data)")
         col1, col2, col3 = st.columns(3)
-        with col1: n_records = st.slider("레코드 수", 100, 5000, 1000, step=100)
-        with col2: anomaly_rate = st.slider("이상 비율 (%)", 5, 50, 15)
-        with col3: seed = st.number_input("랜덤 시드", value=42, min_value=0)
+        with col1: n_records = st.slider("레코드 수 (Count)", 100, 5000, 1000, step=100)
+        with col2: anomaly_rate = st.slider("이상 비율 (Anomaly Rate %)", 5, 50, 15)
+        with col3: seed = st.number_input("랜덤 시드 (Random Seed)", value=42, min_value=0)
         
-        if st.button("🔬 데이터 생성 & 검증", type="primary", use_container_width=True, key="generate_validate"):
+        if st.button("🔬 데이터 생성 & 검증 (Generate & Validate)", type="primary", use_container_width=True, key="generate_validate"):
             with st.spinner(f"{n_records}개 레코드 생성 중..."):
                 generator = SyntheticClaimGenerator(seed=seed)
                 df = generator.generate(n_records=n_records, anomaly_rate=anomaly_rate / 100)
@@ -475,10 +482,10 @@ elif page == "📋 배치 데모":
 # ============================================================
 # 페이지 3: 데이터 미리보기
 # ============================================================
-elif page == "📊 데이터 미리보기":
-    st.title("📊 데이터 미리보기")
+elif page == "📊 데이터 미리보기 (Data Preview)":
+    st.title("📊 데이터 미리보기 (Data Preview)")
     
-    tab1, tab2 = st.tabs(["📁 생성된 데이터", "📤 CSV 업로드"])
+    tab1, tab2 = st.tabs(["📁 생성된 데이터 (Generated)", "📤 CSV 업로드 (Upload CSV)"])
     
     with tab1:
         if st.session_state.generated_data is not None:
@@ -489,12 +496,12 @@ elif page == "📊 데이터 미리보기":
             col1, col2 = st.columns(2)
             with col1:
                 severity_filter = st.multiselect(
-                    "심각도 필터", ["PASS", "WARNING", "CRITICAL"], default=["PASS", "WARNING", "CRITICAL"]
+                    "심각도 필터 (Severity Filter)", ["PASS", "WARNING", "CRITICAL"], default=["PASS", "WARNING", "CRITICAL"]
                 )
             with col2:
                 if "anomaly_type" in df.columns:
                     anomaly_filter = st.multiselect(
-                        "이상 유형 필터", df["anomaly_type"].unique().tolist(), default=df["anomaly_type"].unique().tolist()
+                        "이상 유형 필터 (Anomaly Type Filter)", df["anomaly_type"].unique().tolist(), default=df["anomaly_type"].unique().tolist()
                     )
                 else:
                     anomaly_filter = None
@@ -580,11 +587,11 @@ elif page == "📊 데이터 미리보기":
 # ============================================================
 # 페이지 4: 규칙 사전
 # ============================================================
-elif page == "📖 규칙 사전":
-    st.title("📖 검증 규칙 사전")
-    st.markdown("현재 시스템에 등록된 모든 검증 규칙과 매핑 테이블을 조회합니다.")
+elif page == "📖 규칙 사전 (Rule Dictionary)":
+    st.title("📖 검증 규칙 사전 (Rule Dictionary)")
+    st.markdown("현재 시스템에 등록된 모든 검증 규칙과 매핑 테이블을 조회합니다.\n\nBrowse all validation rules and mapping tables registered in the system.")
     
-    tab1, tab2, tab3 = st.tabs(["📋 ICD-NDC 매핑", "⚡ 충돌 규칙", "💊 GLP-1 규칙"])
+    tab1, tab2, tab3 = st.tabs(["📋 ICD-NDC 매핑 (Mapping)", "⚡ 충돌 규칙 (Conflicts)", "💊 GLP-1 규칙 (GLP-1 Rules)"])
     
     with tab1:
         st.subheader("ICD-NDC 허용 매핑 테이블")
@@ -624,8 +631,8 @@ elif page == "📖 규칙 사전":
 # ============================================================
 # 페이지 5: 분석 대시보드
 # ============================================================
-elif page == "📈 분석 대시보드":
-    st.title("📈 분석 대시보드")
+elif page == "📈 분석 대시보드 (Analytics Dashboard)":
+    st.title("📈 분석 대시보드 (Analytics Dashboard)")
     
     if st.session_state.generated_data is not None:
         df = st.session_state.generated_data
@@ -698,9 +705,9 @@ elif page == "📈 분석 대시보드":
             except Exception:
                 st.info("날짜 데이터 파싱 중 오류가 발생했습니다.")
     else:
-        st.info("💡 '배치 데모' 탭에서 먼저 데이터를 생성해주세요.")
+        st.info("💡 '배치 데모' 탭에서 먼저 데이터를 생성해주세요. (Please generate data in 'Batch Demo' tab first.)")
         
-        if st.button("🔬 샘플 데이터 빠르게 생성 (500개)", type="primary"):
+        if st.button("🔬 샘플 데이터 빠르게 생성 (Generate 500 Samples)", type="primary"):
             with st.spinner("생성 중..."):
                 gen = SyntheticClaimGenerator(seed=42)
                 df = gen.generate(500, 0.15)
